@@ -5,7 +5,7 @@ namespace UOM.WinAPI.Windows.RawInput.Native;
 /// <summary>
 /// DEVINST
 /// </summary>
-public struct DeviceInstanceHandle : IEquatable<DeviceInstanceHandle>
+public readonly struct DeviceInstanceHandle : IEquatable<DeviceInstanceHandle>
 {
 	readonly IntPtr value;
 
