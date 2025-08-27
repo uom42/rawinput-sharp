@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 
@@ -7,11 +8,12 @@ namespace UOM.WinAPI.Windows.RawInput.Native;
 public static class CfgMgr32
 {
 
+	private const string C_LIB_cfgmgr32 = "cfgmgr32";
 
-	[DllImport ("cfgmgr32", CharSet = CharSet.Unicode)]
+	[DllImport (C_LIB_cfgmgr32, CharSet = CharSet.Unicode)]
 	private static extern ConfigReturnValue CM_Locate_DevNode ( out IntPtr pdnDevInst, string pDeviceID, LocateDevNodeFlags ulFlags );
 
-	[DllImport ("cfgmgr32", CharSet = CharSet.Unicode)]
+	[DllImport (C_LIB_cfgmgr32, CharSet = CharSet.Unicode)]
 	private static extern ConfigReturnValue CM_Get_DevNode_Property ( IntPtr dnDevInst, in DevicePropertyKey propertyKey, out uint propertyType, IntPtr propertyBuffer, ref uint propertyBufferSize, uint ulFlags );
 
 
@@ -82,14 +84,12 @@ public static class CfgMgr32
 		try
 		{
 			result = CM_Get_DevNode_Property (devInst, in propertyKey, out _, buffer, ref size, 0);
-			if (result != ConfigReturnValue.Success)
-			{
-				value = null;
-				return result;
-			}
 
-			value = Marshal.PtrToStringUni (buffer);
-			return ConfigReturnValue.Success;
+			value = ( result != ConfigReturnValue.Success )
+				? null
+				: Marshal.PtrToStringUni (buffer);
+			return result;
+
 		}
 		finally
 		{
