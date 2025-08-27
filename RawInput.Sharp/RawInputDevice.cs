@@ -1,145 +1,159 @@
 ﻿using System;
 using System.Linq;
+
 using Linearstar.Windows.RawInput.Native;
+
 
 namespace Linearstar.Windows.RawInput;
 
-public abstract class RawInputDevice
+
+public abstract class RawInputDevice ( RawInputDeviceHandle device, RawInputDeviceInfo deviceInfo )
 {
-    bool gotAttributes;
-    string? productName;
-    string? manufacturerName;
-    string? serialNumber;
 
-    protected RawInputDeviceInfo DeviceInfo { get; }
+	private bool _gotAttributes;
+	private string? _productName;
+	private string? _manufacturerName;
+	private string? _serialNumber;
 
-    public RawInputDeviceHandle Handle { get; }
-    public RawInputDeviceType DeviceType => DeviceInfo.Type;
-    public string? DevicePath { get; }
 
-    public string? ManufacturerName
-    {
-        get
-        {
-            if (manufacturerName == null) GetAttributesOnce();
-            return manufacturerName;
-        }
-    }
+	protected RawInputDeviceInfo DeviceInfo { get; } = deviceInfo;
 
-    public string? ProductName
-    {
-        get
-        {
-            if (productName == null) GetAttributesOnce();
-            return productName;
-        }
-    }
+	public RawInputDeviceHandle Handle { get; } = device;
 
-    public string? SerialNumber
-    {
-        get
-        {
-            if (serialNumber == null) GetAttributesOnce();
-            return serialNumber;
-        }
-    }
+	public RawInputDeviceType DeviceType => DeviceInfo.Type;
 
-    public bool IsConnected =>
-        DevicePath != null && CfgMgr32.TryLocateDevNode(DevicePath, CfgMgr32.LocateDevNodeFlags.Normal, out _) == ConfigReturnValue.Success;
+	public string? DevicePath { get; } = User32_.GetRawInputDeviceName (device);
 
-    public abstract HidUsageAndPage UsageAndPage { get; }
-    public abstract int VendorId { get; }
-    public abstract int ProductId { get; }
 
-    void GetAttributesOnce()
-    {
-        if (gotAttributes) return;
-        gotAttributes = true;
+	public string? ManufacturerName
+	{
+		get
+		{
+			if (_manufacturerName == null) GetAttributesOnce ();
+			return _manufacturerName;
+		}
+	}
 
-        if (DevicePath == null) return;
-        GetAttributesFromHidD();
-        if (manufacturerName == null || productName == null) GetAttributesFromCfgMgr();
-    }
+	public string? ProductName
+	{
+		get
+		{
+			if (_productName == null) GetAttributesOnce ();
+			return _productName;
+		}
+	}
 
-    void GetAttributesFromHidD()
-    {
-        if (DevicePath == null || !HidD.TryOpenDevice(DevicePath, out var device)) return;
+	public string? SerialNumber
+	{
+		get
+		{
+			if (_serialNumber == null) GetAttributesOnce ();
+			return _serialNumber;
+		}
+	}
 
-        try
-        {
-            manufacturerName ??= HidD.GetManufacturerString(device);
-            productName ??= HidD.GetProductString(device);
-            serialNumber ??= HidD.GetSerialNumberString(device);
-        }
-        finally
-        {
-            HidD.CloseDevice(device);
-        }
-    }
+	public bool IsConnected =>
+		DevicePath != null && CfgMgr32.TryLocateDevNode (DevicePath, CfgMgr32.LocateDevNodeFlags.Normal, out _) == ConfigReturnValue.Success;
 
-    void GetAttributesFromCfgMgr()
-    {
-        if (DevicePath == null) return;
+	public abstract HidUsageAndPage UsageAndPage { get; }
+	public abstract int VendorId { get; }
+	public abstract int ProductId { get; }
 
-        var path = DevicePath.Substring(4).Replace('#', '\\');
-        if (path.Contains("{")) path = path.Substring(0, path.IndexOf('{') - 1);
 
-        var device = CfgMgr32.LocateDevNode(path, CfgMgr32.LocateDevNodeFlags.Phantom);
+	private void GetAttributesOnce ()
+	{
+		if (_gotAttributes) return;
+		_gotAttributes = true;
 
-        manufacturerName ??= CfgMgr32.GetDevNodePropertyString(device, in DevicePropertyKey.DeviceManufacturer);
-        productName ??= CfgMgr32.GetDevNodePropertyString(device, in DevicePropertyKey.DeviceFriendlyName);
-        productName ??= CfgMgr32.GetDevNodePropertyString(device, in DevicePropertyKey.Name);
-    }
+		if (DevicePath == null) return;
+		GetAttributesFromHidD ();
+		if (_manufacturerName == null || _productName == null) GetAttributesFromCfgMgr ();
+	}
 
-    protected RawInputDevice(RawInputDeviceHandle device, RawInputDeviceInfo deviceInfo)
-    {
-        Handle = device;
-        DevicePath = User32.GetRawInputDeviceName(device);
-        DeviceInfo = deviceInfo;
-    }
+	private void GetAttributesFromHidD ()
+	{
+		if (DevicePath == null || !HidD.TryOpenDevice (DevicePath, out var device)) return;
 
-    public static RawInputDevice FromHandle(RawInputDeviceHandle device)
-    {
-        var deviceInfo = User32.GetRawInputDeviceInfo(device);
+		try
+		{
+			_manufacturerName ??= HidD.GetManufacturerString (device);
+			_productName ??= HidD.GetProductString (device);
+			_serialNumber ??= HidD.GetSerialNumberString (device);
+		}
+		finally
+		{
+			HidD.CloseDevice (device);
+		}
+	}
 
-        switch (deviceInfo.Type)
-        {
-            case RawInputDeviceType.Mouse:
-                return new RawInputMouse(device, deviceInfo);
-            case RawInputDeviceType.Keyboard:
-                return new RawInputKeyboard(device, deviceInfo);
-            case RawInputDeviceType.Hid:
-                return RawInputDigitizer.IsSupported(deviceInfo.Hid.UsageAndPage)
-                    ? new RawInputDigitizer(device, deviceInfo)
-                    : new RawInputHid(device, deviceInfo);
-            default:
-                throw new ArgumentException();
-        }
-    }
+	private void GetAttributesFromCfgMgr ()
+	{
+		if (DevicePath == null) return;
 
-    /// <summary>
-    /// Gets available devices that can be handled with Raw Input.
-    /// </summary>
-    /// <returns>Array of <see cref="RawInputDevice"/>, which contains mouse as a <see cref="RawInputMouse"/>, keyboard as a <see cref="RawInputKeyboard"/>, and any other HIDs as a <see cref="RawInputHid"/>.</returns>
-    public static RawInputDevice[] GetDevices()
-    {
-        var devices = User32.GetRawInputDeviceList();
+		var path = DevicePath.Substring (4).Replace ('#', '\\');
+		if (path.Contains ("{")) path = path.Substring (0, path.IndexOf ('{') - 1);
 
-        return devices.Select(i => FromHandle(i.Device)).ToArray();
-    }
+		var device = CfgMgr32.LocateDevNode (path, CfgMgr32.LocateDevNodeFlags.Phantom);
 
-    public byte[] GetPreparsedData() =>
-        User32.GetRawInputDevicePreparsedData(Handle);
+		_manufacturerName ??= CfgMgr32.GetDevNodePropertyString (device, in DevicePropertyKey.DeviceManufacturer);
+		_productName ??= CfgMgr32.GetDevNodePropertyString (device, in DevicePropertyKey.DeviceFriendlyName);
+		_productName ??= CfgMgr32.GetDevNodePropertyString (device, in DevicePropertyKey.Name);
+	}
 
-    public static void RegisterDevice(HidUsageAndPage usageAndPage, RawInputDeviceFlags flags, IntPtr hWndTarget) =>
-        RegisterDevice(new RawInputDeviceRegistration(usageAndPage, flags, hWndTarget));
 
-    public static void RegisterDevice(params RawInputDeviceRegistration[] devices) =>
-        User32.RegisterRawInputDevices(devices);
 
-    public static void UnregisterDevice(HidUsageAndPage usageAndPage) =>
-        RegisterDevice(usageAndPage, RawInputDeviceFlags.Remove, IntPtr.Zero);
 
-    public static RawInputDeviceRegistration[] GetRegisteredDevices() =>
-        User32.GetRegisteredRawInputDevices();
+	public static RawInputDevice FromHandle ( RawInputDeviceHandle device )
+	{
+		var deviceInfo = User32_.GetRawInputDeviceInfo (device);
+		return deviceInfo.Type switch
+		{
+			RawInputDeviceType.Mouse => new RawInputMouse (device, deviceInfo),
+			RawInputDeviceType.Keyboard => new RawInputKeyboard (device, deviceInfo),
+			RawInputDeviceType.Hid => RawInputDigitizer.IsSupported (deviceInfo.Hid.UsageAndPage)
+								? new RawInputDigitizer (device, deviceInfo)
+								: new RawInputHid (device, deviceInfo),
+			_ => throw new ArgumentException (),
+		};
+	}
+
+	/// <summary>
+	/// Gets available devices that can be handled with Raw Input.
+	/// </summary>
+	/// <returns>Array of <see cref="RawInputDevice"/>, which contains mouse as a <see cref="RawInputMouse"/>, keyboard as a <see cref="RawInputKeyboard"/>, and any other HIDs as a <see cref="RawInputHid"/>.</returns>
+	public static RawInputDevice[] GetDevices ()
+	{
+		var devices = User32_.GetRawInputDeviceList ();
+
+		return [ .. devices.Select (i => FromHandle ((RawInputDeviceHandle) i.hDevice.DangerousGetHandle ())) ];
+	}
+
+	public byte[] GetPreparsedData () =>
+		User32_.GetRawInputDevicePreparsedData (Handle);
+
+	public static void RegisterDevice ( HidUsageAndPage usageAndPage, RawInputDeviceFlags flags, IntPtr hWndTarget ) =>
+		RegisterDevice (new RawInputDeviceRegistration (usageAndPage, flags, hWndTarget));
+
+	public static void RegisterDevice ( params RawInputDeviceRegistration[] devices ) =>
+		User32_.RegisterRawInputDevices (devices);
+
+	public static void UnregisterDevice ( HidUsageAndPage usageAndPage ) =>
+		RegisterDevice (usageAndPage, RawInputDeviceFlags.Remove, IntPtr.Zero);
+
+	public static RawInputDeviceRegistration[] GetRegisteredDevices () =>
+		User32_.GetRegisteredRawInputDevices ();
+
+	public override string ToString ()
+	{
+		return @$"Type: {DeviceType}
+Handle: {Handle}
+VendorId: {VendorId:X}
+ProductId: {ProductId:X}
+ManufacturerName: {ManufacturerName}
+ProductName: {ProductName}
+SerialNumber: {SerialNumber}
+DevicePath: {DevicePath}
+*** DeviceInfo: {DeviceInfo}";
+
+	}
 }

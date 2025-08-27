@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+    <NoWarn>$(NoWarn);NU1507</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Vanara.Pinvoke.Kernel32" Version="4.1.3" />
+    <PackageVersion Include="Vanara.Pinvoke.User32" Version="4.1.3" />
+  </ItemGroup>
+</Project>

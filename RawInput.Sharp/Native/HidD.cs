@@ -2,104 +2,100 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
+
 namespace Linearstar.Windows.RawInput.Native;
+
 
 public static class HidD
 {
-    [DllImport("hid", CharSet = CharSet.Unicode)]
-    [return: MarshalAs(UnmanagedType.U1)]
-    static extern bool HidD_GetManufacturerString(IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength);
 
-    [DllImport("hid", CharSet = CharSet.Unicode)]
-    [return: MarshalAs(UnmanagedType.U1)]
-    static extern bool HidD_GetProductString(IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength);
 
-    [DllImport("hid", CharSet = CharSet.Unicode)]
-    [return: MarshalAs(UnmanagedType.U1)]
-    static extern bool HidD_GetSerialNumberString(IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength);
+	[DllImport ("hid", CharSet = CharSet.Unicode)]
+	[return: MarshalAs (UnmanagedType.U1)]
+	static extern bool HidD_GetManufacturerString ( IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength );
 
-    [DllImport("hid")]
-    [return: MarshalAs(UnmanagedType.U1)]
-    static extern bool HidD_GetPreparsedData(IntPtr HidDeviceObject, out IntPtr PreparsedData);
+	[DllImport ("hid", CharSet = CharSet.Unicode)]
+	[return: MarshalAs (UnmanagedType.U1)]
+	static extern bool HidD_GetProductString ( IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength );
 
-    [DllImport("hid")]
-    [return: MarshalAs(UnmanagedType.U1)]
-    static extern bool HidD_FreePreparsedData(IntPtr PreparsedData);
+	[DllImport ("hid", CharSet = CharSet.Unicode)]
+	[return: MarshalAs (UnmanagedType.U1)]
+	static extern bool HidD_GetSerialNumberString ( IntPtr HidDeviceObject, [Out] byte[] Buffer, uint BufferLength );
 
-    public static HidDeviceHandle OpenDevice(string devicePath)
-    {
-        var deviceHandle = Kernel32.CreateFile(devicePath, Kernel32.ShareMode.Read | Kernel32.ShareMode.Write, Kernel32.CreateDisposition.OpenExisting);
+	[DllImport ("hid")]
+	[return: MarshalAs (UnmanagedType.U1)]
+	static extern bool HidD_GetPreparsedData ( IntPtr HidDeviceObject, out IntPtr PreparsedData );
 
-        return (HidDeviceHandle)deviceHandle;
-    }
+	[DllImport ("hid")]
+	[return: MarshalAs (UnmanagedType.U1)]
+	private static extern bool HidD_FreePreparsedData ( IntPtr PreparsedData );
 
-    public static bool TryOpenDevice(string devicePath, out HidDeviceHandle device)
-    {
-        if (!Kernel32.TryCreateFile(
-                devicePath,
-                Kernel32.ShareMode.Read | Kernel32.ShareMode.Write,
-                Kernel32.CreateDisposition.OpenExisting,
-                out var deviceHandle))
-        {
-            device = HidDeviceHandle.Zero;
-            return false;
-        }
 
-        device = (HidDeviceHandle)deviceHandle;
-        return true;
-    }
+	public static HidDeviceHandle OpenDevice ( string devicePath )
+	{
+		var deviceHandle = Kernel32_.CreateFile (devicePath, System.IO.FileShare.Read | System.IO.FileShare.Write, System.IO.FileMode.Open);
+		return (HidDeviceHandle) deviceHandle.DangerousGetHandle ();
+	}
 
-    public static void CloseDevice(HidDeviceHandle device)
-    {
-        var deviceHandle = HidDeviceHandle.GetRawValue(device);
+	public static bool TryOpenDevice ( string devicePath, out HidDeviceHandle device )
+	{
+		if (!Kernel32_.TryCreateFile (
+				devicePath,
+				System.IO.FileShare.Read | System.IO.FileShare.Write,
+				System.IO.FileMode.Open,
+				out var deviceHandle))
+		{
+			device = HidDeviceHandle.Zero;
+			return false;
+		}
 
-        Kernel32.CloseHandle(deviceHandle);
-    }
+		device = (HidDeviceHandle) deviceHandle.DangerousGetHandle ();
+		return true;
+	}
 
-    public static string? GetManufacturerString(HidDeviceHandle device)
-    {
-        var deviceHandle = HidDeviceHandle.GetRawValue(device);
 
-        return GetString(deviceHandle, HidD_GetManufacturerString);
-    }
+	public static void CloseDevice ( HidDeviceHandle device )
+	{
+		var deviceHandle = HidDeviceHandle.GetRawValue (device);
+		Kernel32.CloseHandle (deviceHandle);
+	}
 
-    public static string? GetProductString(HidDeviceHandle device)
-    {
-        var deviceHandle = HidDeviceHandle.GetRawValue(device);
+	public static string? GetManufacturerString ( HidDeviceHandle device )
+		=> HidDeviceHandle.GetRawValue (device)
+		.GetString (HidD_GetManufacturerString);
 
-        return GetString(deviceHandle, HidD_GetProductString);
-    }
 
-    public static string? GetSerialNumberString(HidDeviceHandle device)
-    {
-        var deviceHandle = HidDeviceHandle.GetRawValue(device);
+	public static string? GetProductString ( HidDeviceHandle device )
+		=> HidDeviceHandle.GetRawValue (device).
+			GetString (HidD_GetProductString);
 
-        return GetString(deviceHandle, HidD_GetSerialNumberString);
-    }
 
-    public static HidPreparsedData GetPreparsedData(HidDeviceHandle device)
-    {
-        var deviceHandle = HidDeviceHandle.GetRawValue(device);
+	public static string? GetSerialNumberString ( HidDeviceHandle device )
+		=> HidDeviceHandle.GetRawValue (device)
+		.GetString (HidD_GetSerialNumberString);
 
-        HidD_GetPreparsedData(deviceHandle, out var preparsedData);
 
-        return (HidPreparsedData)preparsedData;
-    }
+	public static HidPreparsedData GetPreparsedData ( HidDeviceHandle device )
+	{
+		var deviceHandle = HidDeviceHandle.GetRawValue (device);
+		HidD_GetPreparsedData (deviceHandle, out var preparsedData);
+		return (HidPreparsedData) preparsedData;
+	}
 
-    public static void FreePreparsedData(HidPreparsedData preparsedData)
-    {
-        HidD_FreePreparsedData((IntPtr)preparsedData);
-    }
+	public static void FreePreparsedData ( HidPreparsedData preparsedData )
+		=> HidD_FreePreparsedData ((IntPtr) preparsedData);
 
-    static string? GetString(IntPtr handle, Func<IntPtr, byte[], uint, bool> proc)
-    {
-        var buf = new byte[256];
 
-        if (!proc(handle, buf, (uint)buf.Length))
-            return null;
 
-        var str = Encoding.Unicode.GetString(buf, 0, buf.Length);
+	private static string? GetString ( this IntPtr handle, Func<IntPtr, byte[], uint, bool> proc )
+	{
+		var buf = new byte[ 256 ];
 
-        return str.Contains("\0") ? str.Substring(0, str.IndexOf('\0')) : str;
-    }
+		if (!proc (handle, buf, (uint) buf.Length))
+			return null;
+
+		var str = Encoding.Unicode.GetString (buf, 0, buf.Length);
+
+		return str.Contains ("\0") ? str.Substring (0, str.IndexOf ('\0')) : str;
+	}
 }

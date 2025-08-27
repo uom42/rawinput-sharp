@@ -1,0 +1,79 @@
+﻿https://stackoverflow.com/questions/20049080/blocking-input-from-keyboard-hid
+
+Блокировка ввода с клавиатуры HID
+
+
+
+
+ComponentDispatcher.ThreadFilterMessage += (ref MSG msg, ref bool handled) =>
+                {
+                    if (msg.message == Win32.WM_INPUT)
+                    {
+                        var result = ProcessRawInput(msg.lParam);
+                        handled = result != null && result.Value;
+                        return;
+                    }
+
+                    handled = false;
+                };
+				
+				
+				
+				
+				
+				3
+
+После дополнительных поисков я нашёл решение, применимое к WinForms здесь. Я смог адаптировать его для WPF следующим образом:
+
+ComponentDispatcher.ThreadFilterMessage += (ref MSG msg, ref bool handled) =>
+                {
+                    if (msg.message == Win32.WM_INPUT)
+                    {
+                        var result = ProcessRawInput(msg.lParam);
+                        this.m_bIgnoreNextKeyDownMessage = result != null && result.Value;
+                        return;
+                    }
+                    if (msg.message == Win32.WM_KEYDOWN && this.m_bIgnoreNextKeyDownMessage)
+                    {
+                        handled = true;
+                    }
+
+                    this.m_bIgnoreNextKeyDownMessage = false;
+                };
+Это решение по сути помечает первое сообщение WM_KEYDOWN после сообщения WM_INPUT о сканировании штрихкода как «обработанное». Я не уверен, что это единственное/лучшее/самое безопасное решение, но, похоже, оно работает.
+
+Обновить:
+
+При использовании описанного выше решения я обнаружил, что время от времени один случайный символ из отсканированного штрихкода попадал в текстовое поле, на котором был сфокусирован курсор. Я не знаю, почему так происходит. Возможно, это связано с синхронизацией событий клавиатуры при их передаче через обработчик сообщений. Другое решение для проверки того, следует ли игнорировать сообщение WM_KEYDOWN:
+
+if (msg.message == Win32.WM_KEYDOWN && !String.IsNullOrEmpty(this.m_strKeyInput))
+{
+    handled = true;
+}
+Буфер m_strKeyInput содержит текущее значение отсканированного штрихкода. Этот буфер пуст, когда штрихкод не доступен, и заполняется по одному символу за раз, когда сканер штрихкодов считывает штрихкод, а затем очищается при возникновении пользовательского события BarcodeScanned. Единственный недостаток этого решения, который я могу назвать, заключается в том, что все клавиатуры перестают работать на несколько миллисекунд, пока сканер считывает штрихкод. Для моего сценария это приемлемо.
+
+
+
+0
+
+Похоже, что, поскольку вы перенаправляете ввод со сканера (рассматривая его как клавиатуру) в текстовое поле, вы можете просто использовать одно из событий Preview* в этом текстовом поле для дополнительной обработки. Например, вы можете переопределить PreviewTextInput
+
+private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+{
+  // MyBarcodeScanner would be a reference to the IInput device that represents the scanner:
+  if (e.Device == MyBarcodeScanner)
+  {
+    // Process the text, rejecting it in this case.
+    // Marking the event as handled will prevent the 'TextChanged' event 
+    // from firing, so the characters will not appear in the text box.
+    e.Handled = true;
+  }
+  else
+  {
+    // This is some other keyboard, by not handling the event,
+    // the users will be allowed to enter text normally.
+  }
+}
+Возможно, вам придётся действовать методом проб и ошибок, чтобы понять, как определить сканер штрихкодов, который обозначается как 'e.Device', но это должно быть относительно несложно. Извините, что не могу дать более полный ответ, но у меня нет собственного сканера штрихкодов, чтобы провести эксперимент.
+
+

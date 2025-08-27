@@ -1,41 +1,62 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace Linearstar.Windows.RawInput.Native;
 
 /// <summary>
 /// RID_DEVICE_INFO
 /// </summary>
-[StructLayout(LayoutKind.Explicit)]
+[StructLayout (LayoutKind.Explicit)]
 public readonly struct RawInputDeviceInfo
 {
-    [FieldOffset(0)]
-    readonly int sbSize;
-    [FieldOffset(4)]
-    readonly RawInputDeviceType dwType;
-    [FieldOffset(8)]
-    readonly RawInputMouseInfo mouse;
-    [FieldOffset(8)]
-    readonly RawInputKeyboardInfo keyboard;
-    [FieldOffset(8)]
-    readonly RawInputHidInfo hid;
-        
-    /// <summary>
-    /// dwType
-    /// </summary>
-    public RawInputDeviceType Type => dwType;
+	[FieldOffset (0)]
+	readonly int sbSize;
+	[FieldOffset (4)]
+	readonly RawInputDeviceType dwType;
+	[FieldOffset (8)]
+	readonly RawInputMouseInfo mouse;
+	[FieldOffset (8)]
+	readonly RawInputKeyboardInfo keyboard;
+	[FieldOffset (8)]
+	readonly RawInputHidInfo hid;
 
-    /// <summary>
-    /// mouse
-    /// </summary>
-    public RawInputMouseInfo Mouse => mouse;
+	/// <summary>
+	/// dwType
+	/// </summary>
+	public RawInputDeviceType Type => dwType;
 
-    /// <summary>
-    /// keyboard
-    /// </summary>
-    public RawInputKeyboardInfo Keyboard => keyboard;
+	/// <summary>
+	/// mouse
+	/// </summary>
+	public RawInputMouseInfo Mouse => mouse;
 
-    /// <summary>
-    /// hid
-    /// </summary>
-    public RawInputHidInfo Hid => hid;
+	/// <summary>
+	/// keyboard
+	/// </summary>
+	public RawInputKeyboardInfo Keyboard => keyboard;
+
+	/// <summary>
+	/// hid
+	/// </summary>
+	public RawInputHidInfo Hid => hid;
+
+	public override string ToString ()
+	{
+		string s = dwType.ToString ();
+		switch (dwType)
+		{
+			case RawInputDeviceType.Mouse:
+				s = Mouse.ToString ()!;
+				break;
+			case RawInputDeviceType.Keyboard:
+				s = Keyboard.ToString ()!;
+				break;
+			case RawInputDeviceType.Hid:
+				s = Hid.ToString ()!;
+				break;
+			default:
+				break;
+		}
+		return s;
+	}
 }
