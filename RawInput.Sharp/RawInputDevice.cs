@@ -74,16 +74,17 @@ public abstract class RawInputDevice ( RawInputDeviceHandle device, RawInputDevi
 	{
 		if (DevicePath == null || !HidD.TryOpenDevice (DevicePath, out var device)) return;
 
-		try
-		{
-			_manufacturerName ??= HidD.GetManufacturerString (device);
-			_productName ??= HidD.GetProductString (device);
-			_serialNumber ??= HidD.GetSerialNumberString (device);
-		}
-		finally
-		{
-			device.CloseDevice ();
-		}
+		using (device)
+			try
+			{
+				_manufacturerName ??= HidD.GetManufacturerString (device);
+				_productName ??= HidD.GetProductString (device);
+				_serialNumber ??= HidD.GetSerialNumberString (device);
+			}
+			finally
+			{
+				//device.CloseDevice ();
+			}
 	}
 
 	private void GetAttributesFromCfgMgr ()
