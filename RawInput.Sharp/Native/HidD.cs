@@ -31,7 +31,6 @@ public static class HidD
 	private static extern bool HidD_FreePreparsedData ( IntPtr PreparsedData );
 
 
-
 	public static bool TryOpenDevice ( string devicePath, out HidDeviceHandle device )
 	{
 
@@ -69,7 +68,6 @@ public static class HidD
 
 	public static HidPreparsedData GetPreparsedData ( HidDeviceHandle device )
 	{
-		//var deviceHandle = device.DangerousGetHandle ();
 		HidD_GetPreparsedData (device.DangerousGetHandle (), out var preparsedData);
 		return (HidPreparsedData) preparsedData;
 	}
