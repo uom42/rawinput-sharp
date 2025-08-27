@@ -11,39 +11,39 @@ public static class User32_
 {
 
 
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern uint GetRawInputDeviceInfo ( IntPtr hDevice, RawInputDeviceInfoBehavior uiBehavior, IntPtr pData, out uint pcbSize );
 
 
-	[DllImport ("user32", SetLastError = true, CharSet = CharSet.Unicode)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true, CharSet = CharSet.Unicode)]
 	internal static extern uint GetRawInputDeviceInfo ( IntPtr hDevice, RawInputDeviceInfoBehavior uiBehavior, StringBuilder pData, in uint pcbSize );
 
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern uint GetRawInputDeviceInfo ( IntPtr hDevice, RawInputDeviceInfoBehavior uiBehavior, out RawInputDeviceInfo pData, in uint pcbSize );
 
 
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern bool RegisterRawInputDevices ( RawInputDeviceRegistration[] pRawInputDevices, uint uiNumDevices, uint cbSize );
 
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern uint GetRegisteredRawInputDevices ( [Out] RawInputDeviceRegistration[]? pRawInputDevices, ref uint puiNumDevices, uint cbSize );
 
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern uint GetRawInputData ( IntPtr hRawInput, User32.RID uiBehavior, IntPtr pData, ref uint pcbSize, uint cbSizeHeader );
 
 
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern uint GetRawInputData ( IntPtr hRawInput, User32.RID uiBehavior, out RawInputHeader pData, ref uint pcbSize, uint cbSizeHeader );
 
 
 	/*
 
 	
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern uint GetRawInputDeviceInfo ( IntPtr hDevice, RawInputDeviceInfoBehavior uiBehavior, [Out] byte[] pData, in uint pcbSize );
 
 
-	[DllImport ("user32", SetLastError = true)]
+	[DllImport (Vanara.PInvoke.Lib.User32, SetLastError = true)]
 	internal static extern IntPtr DefRawInputProc ( byte[] paRawInput, int nInput, uint cbSizeHeader );
   
 	 */
