@@ -229,17 +229,5 @@ public static class User32_
 		}
 	}
 
-	public static bool EnsureSuccess ( this bool result )
-	{
-		if (!result) throw new Win32Exception ();
 
-		return result;
-	}
-
-	public static uint EnsureSuccess ( this uint result )
-	{
-		if (result == unchecked((uint) -1)) throw new Win32Exception ();
-
-		return result;
-	}
 }
