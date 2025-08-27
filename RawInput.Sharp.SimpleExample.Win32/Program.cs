@@ -8,13 +8,13 @@ using RawInputWindowReciever mowRawInput = new (
 	HidUsageAndPage.Keyboard,
 	rawKeyboardInputHandler: kbd =>
 	{
-		if (!( kbd.Device?.ManufacturerName ?? string.Empty ).Equals (DEVICE_MFG_MIFARE_READER_LKD)) return;
+		//if (!( kbd.Device?.ManufacturerName ?? string.Empty ).Equals (DEVICE_MFG_MIFARE_READER_LKD)) return;
 
 		Console.WriteLine ($"{kbd.Keyboard} at {kbd.Device}");
 	},
 	deviceAddHandler: dev =>
 	{
-		if (!( dev.ManufacturerName ?? string.Empty ).Equals (DEVICE_MFG_MIFARE_READER_LKD)) return;
+		//if (!( dev.ManufacturerName ?? string.Empty ).Equals (DEVICE_MFG_MIFARE_READER_LKD)) return;
 
 		Console.WriteLine ($"InputDeviceAdded: {dev}");
 	}

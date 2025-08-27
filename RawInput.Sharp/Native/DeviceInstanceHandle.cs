@@ -5,14 +5,14 @@ namespace UOM.WinAPI.Windows.RawInput.Native;
 /// <summary>
 /// DEVINST
 /// </summary>
-public class DeviceInstanceHandle : Vanara.PInvoke.Kernel32.SafeHFILE, IEquatable<DeviceInstanceHandle>
+public struct DeviceInstanceHandle : IEquatable<DeviceInstanceHandle>
 {
 	readonly IntPtr value;
 
 	public static DeviceInstanceHandle Zero
 		=> (DeviceInstanceHandle) IntPtr.Zero;
 
-	DeviceInstanceHandle ( IntPtr value ) : base (value, true)
+	DeviceInstanceHandle ( IntPtr value )
 		=> this.value = value;
 
 	public static IntPtr GetRawValue ( DeviceInstanceHandle handle )
@@ -27,7 +27,7 @@ public class DeviceInstanceHandle : Vanara.PInvoke.Kernel32.SafeHFILE, IEquatabl
 	public static bool operator != ( DeviceInstanceHandle a, DeviceInstanceHandle b )
 		=> !a.Equals (b);
 
-	public bool Equals ( DeviceInstanceHandle? other ) => value.Equals (other?.value);
+	public bool Equals ( DeviceInstanceHandle other ) => value.Equals (other.value);
 
 	public override bool Equals ( object? obj )
 		=>

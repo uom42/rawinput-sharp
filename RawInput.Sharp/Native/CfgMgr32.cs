@@ -41,7 +41,9 @@ public static class CfgMgr32
 
 	public static DeviceInstanceHandle LocateDevNode ( string devicePath, LocateDevNodeFlags flags )
 	{
-		TryLocateDevNode (devicePath, flags, out var device).EnsureSuccess ();
+		TryLocateDevNode (devicePath, flags, out var device)
+			.EnsureSuccess ();
+
 
 		return device;
 	}
