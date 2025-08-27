@@ -44,7 +44,6 @@ public static class CfgMgr32
 		TryLocateDevNode (devicePath, flags, out var device)
 			.EnsureSuccess ();
 
-
 		return device;
 	}
 

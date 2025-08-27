@@ -82,7 +82,7 @@ public abstract class RawInputDevice ( RawInputDeviceHandle device, RawInputDevi
 		}
 		finally
 		{
-			HidD.CloseDevice (device);
+			device.CloseDevice ();
 		}
 	}
 

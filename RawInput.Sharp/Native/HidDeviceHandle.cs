@@ -4,6 +4,7 @@
 namespace UOM.WinAPI.Windows.RawInput.Native;
 
 
+
 public readonly struct HidDeviceHandle : IEquatable<HidDeviceHandle>
 {
 	readonly IntPtr value;

@@ -11,21 +11,6 @@ public static class User32_
 {
 
 
-	/*
-	/// <summary>
-	/// A message-only window enables you to send and receive messages. It is not visible, has no z-order, cannot be enumerated, and does not receive broadcast messages. <br/>
-	/// The window simply dispatches messages. <see cref="https://learn.microsoft.com/en-us/windows/win32/winmsg/window-features#message-only-windows"/>
-	/// <br/><br/>
-	/// To create a message-only window, specify the HWND_MESSAGE constant or a handle to an existing message-only window in the hWndParent parameter of the CreateWindowEx function. <br/>
-	/// You can also change an existing window to a message-only window by specifying HWND_MESSAGE in the hWndNewParent parameter of the SetParent function.<br/><br/>
-	/// To find message-only windows, specify HWND_MESSAGE in the hwndParent parameter of the FindWindowEx function.<br/>
-	/// In addition, FindWindowEx searches message-only windows as well as top-level windows if both the hwndParent and hwndChildAfter parameters are NULL.
-	/// </summary>
-	public static readonly IntPtr HWND_MESSAGE = new (-3);
-	 */
-
-
-
 	[DllImport ("user32", SetLastError = true)]
 	internal static extern uint GetRawInputDeviceInfo ( IntPtr hDevice, RawInputDeviceInfoBehavior uiBehavior, IntPtr pData, out uint pcbSize );
 
