@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Linearstar.Windows.RawInput;
+namespace UOM.WinAPI.Windows.RawInput;
 
 static class MarshalEx
 {

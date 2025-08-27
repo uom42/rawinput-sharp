@@ -1,4 +1,4 @@
-﻿namespace Linearstar.Windows.RawInput.Native;
+﻿namespace UOM.WinAPI.Windows.RawInput.Native;
 
 /// <summary>
 /// NTSTATUS

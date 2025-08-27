@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 
-namespace Linearstar.Windows.RawInput.Native.Window;
+namespace UOM.WinAPI.Windows.RawInput.Native.Window;
 
 
 

@@ -1,4 +1,4 @@
-using Linearstar.Windows.RawInput;
+using UOM.WinAPI.Windows.RawInput;
 
 namespace RawInput.Sharp.DigitizerExample;
 

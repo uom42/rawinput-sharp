@@ -12,7 +12,7 @@ https://www.nuget.org/packages/RawInput.Sharp/
 ### Acquiring connected devices
 
 ```cs
-// using Linearstar.Windows.RawInput;
+// using UOM.WinAPI.Windows.RawInput;
 
 // Get the devices that can be handled with Raw Input.
 var devices = RawInputDevice.GetDevices();

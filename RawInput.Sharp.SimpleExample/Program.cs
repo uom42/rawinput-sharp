@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using Linearstar.Windows.RawInput;
+using UOM.WinAPI.Windows.RawInput;
 using RawInput.Sharp.SimpleExample;
 
 // Get the devices that can be handled with Raw Input.

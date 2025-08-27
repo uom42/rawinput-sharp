@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace Linearstar.Windows.RawInput.Native;
+namespace UOM.WinAPI.Windows.RawInput.Native;
 
 /// <summary>
 /// RAWHID

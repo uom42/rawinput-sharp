@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
-using Linearstar.Windows.RawInput;
+using UOM.WinAPI.Windows.RawInput;
 
 namespace RawInput.Sharp.SimpleExample.WPF
 {

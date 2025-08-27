@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Linearstar.Windows.RawInput;
+namespace UOM.WinAPI.Windows.RawInput;
 
 class RawInputDigitizerButton
 {

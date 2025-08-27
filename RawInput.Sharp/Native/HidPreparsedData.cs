@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Linearstar.Windows.RawInput.Native;
+namespace UOM.WinAPI.Windows.RawInput.Native;
 
 /// <summary>
 /// HIDP_PREPARSED_DATA

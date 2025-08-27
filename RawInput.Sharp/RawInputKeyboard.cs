@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 
-using Linearstar.Windows.RawInput.Native;
+using UOM.WinAPI.Windows.RawInput.Native;
 
-namespace Linearstar.Windows.RawInput;
+namespace UOM.WinAPI.Windows.RawInput;
 
 public class RawInputKeyboard : RawInputDevice
 {

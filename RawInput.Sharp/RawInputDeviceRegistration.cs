@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Linearstar.Windows.RawInput;
+namespace UOM.WinAPI.Windows.RawInput;
 
 public readonly struct RawInputDeviceRegistration
 {

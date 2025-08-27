@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 
-namespace Linearstar.Windows.RawInput.Native;
+namespace UOM.WinAPI.Windows.RawInput.Native;
 
 
 public static class HidD

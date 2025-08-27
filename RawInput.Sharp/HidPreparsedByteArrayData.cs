@@ -1,4 +1,4 @@
-﻿namespace Linearstar.Windows.RawInput;
+﻿namespace UOM.WinAPI.Windows.RawInput;
 
 public class HidPreparsedByteArrayData : IHidPreparsedData
 {

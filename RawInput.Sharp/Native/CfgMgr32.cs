@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Linearstar.Windows.RawInput.Native;
+
+namespace UOM.WinAPI.Windows.RawInput.Native;
 
 public static class CfgMgr32
 {

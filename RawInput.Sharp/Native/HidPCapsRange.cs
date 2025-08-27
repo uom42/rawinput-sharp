@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Linearstar.Windows.RawInput.Native;
+namespace UOM.WinAPI.Windows.RawInput.Native;
 
 [StructLayout(LayoutKind.Sequential)]
 public struct HidPCapsRange
