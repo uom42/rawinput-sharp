@@ -1,10 +1,11 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 
-namespace UOM.WinAPI.Windows.RawInput.Native.Window;
+using UOM.WinAPI.Windows.RawInput.Native;
+
+
+namespace UOM.WinAPI.Windows.RawInput;
 
 
 public class RawInputWindowReciever : MessageOnlyWindow
@@ -99,7 +100,7 @@ public class RawInputWindowReciever : MessageOnlyWindow
 							try
 							{
 								OnInputDeviceAdded (
-									RawInputDevice.FromHandle ((UOM.WinAPI.Windows.RawInput.Native.RawInputDeviceHandle) lParam)
+									RawInputDevice.FromHandle ((RawInputDeviceHandle) lParam)
 									);
 							}
 							catch { }//ignore any errors in message loop

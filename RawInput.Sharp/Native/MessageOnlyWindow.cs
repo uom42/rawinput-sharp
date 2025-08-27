@@ -1,10 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 
-namespace UOM.WinAPI.Windows.RawInput.Native.Window;
-
+namespace UOM.WinAPI.Windows.RawInput.Native;
 
 
 public abstract class MessageOnlyWindow : User32.SafeHWND

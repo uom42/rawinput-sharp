@@ -1,5 +1,4 @@
 ﻿using UOM.WinAPI.Windows.RawInput;
-using UOM.WinAPI.Windows.RawInput.Native.Window;
 
 
 const string DEVICE_MFG_MIFARE_READER_LKD = "Sycreader";
