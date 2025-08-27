@@ -10,6 +10,8 @@ namespace Linearstar.Windows.RawInput.Native;
 public static class User32_
 {
 
+
+	/*
 	/// <summary>
 	/// A message-only window enables you to send and receive messages. It is not visible, has no z-order, cannot be enumerated, and does not receive broadcast messages. <br/>
 	/// The window simply dispatches messages. <see cref="https://learn.microsoft.com/en-us/windows/win32/winmsg/window-features#message-only-windows"/>
@@ -20,6 +22,7 @@ public static class User32_
 	/// In addition, FindWindowEx searches message-only windows as well as top-level windows if both the hwndParent and hwndChildAfter parameters are NULL.
 	/// </summary>
 	public static readonly IntPtr HWND_MESSAGE = new (-3);
+	 */
 
 
 
