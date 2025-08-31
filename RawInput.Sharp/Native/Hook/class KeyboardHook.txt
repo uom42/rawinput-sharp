@@ -1,0 +1,129 @@
+using System;
+using System.Runtime.InteropServices;
+
+public class KeyboardHook
+{
+    private const int WH_KEYBOARD_LL = 13;
+    private const int WM_KEYDOWN = 0x0100;
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+    [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, IntPtr wParam, IntPtr lParam);
+
+    [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+    private static extern IntPtr GetModuleHandle(string lpModuleName);
+
+    private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);
+
+    private IntPtr hookID = IntPtr.Zero;
+
+    public void SetHook()
+    {
+        hookID = SetHook(HookCallback);
+    }
+
+    public void UnHook()
+    {
+        UnhookWindowsHookEx(hookID);
+    }
+
+    private IntPtr SetHook(LowLevelKeyboardProc proc)
+    {
+        using (System.Diagnostics.Process currentProcess = System.Diagnostics.Process.GetCurrentProcess())
+        using (System.Diagnostics.ProcessModule currentModule = currentProcess.MainModule)
+        {
+            IntPtr moduleHandle = GetModuleHandle(currentModule.ModuleName);
+            return SetWindowsHookEx(WH_KEYBOARD_LL, proc, moduleHandle, 0);
+        }
+    }
+
+    private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+    {
+        if (nCode >= 0 && wParam == (IntPtr)WM_KEYDOWN)
+        {
+            // Block the key press
+            return (IntPtr)1;
+        }
+        return CallNextHookEx(hookID, nCode, wParam, lParam);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+using System;
+using System.Windows.Forms;
+
+public partial class MainForm : Form
+{
+    private KeyboardHook hook = new KeyboardHook();
+    private bool isHooked = false;
+
+    public MainForm()
+    {
+        InitializeComponent();
+    }
+
+    private void btnHook_Click(object sender, EventArgs e)
+    {
+        if (!isHooked)
+        {
+            hook.SetHook();
+            isHooked = true;
+            Console.WriteLine("Keyboard hook set.");
+        }
+    }
+
+    private void btnUnhook_Click(object sender, EventArgs e)
+    {
+        if (isHooked)
+        {
+            hook.UnHook();
+            isHooked = false;
+            Console.WriteLine("Keyboard hook unset.");
+        }
+    }
+}
+
+
+
+
+
+/*
+
+Key points:
+
+The SetHook method sets the low-level keyboard hook.
+The Unhook method uninstalls the hook.
+The HookCallback method is called whenever a key is pressed. By returning (IntPtr)1, you block the key press from being processed further.
+Choosing the Right Method
+Specific Control: Use control.Enabled = false; for simple cases.
+Application-Wide (Simple): Use IMessageFilter for a straightforward approach to block input.
+Application-Wide (Advanced): Use low-level keyboard hooks for precise, system-wide control, but be aware of the added complexity.
+Remember to handle these techniques carefully, especially the global input blocking methods, as they can affect the user experience if not implemented correctly.
+
+I hope this helps you disable keyboard input in your C# application effectively!
+
+Here are some related questions you might find interesting:
+
+*/

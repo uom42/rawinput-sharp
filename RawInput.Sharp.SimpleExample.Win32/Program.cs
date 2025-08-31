@@ -10,17 +10,20 @@ using RawInputWindowReciever mowRawInput = new (
 	{
 		//if (!( kbd.Device?.ManufacturerName ?? string.Empty ).Equals (DEVICE_MFG_MIFARE_READER_LKD)) return;
 
-		Console.WriteLine ($"{kbd.Keyboard} at {kbd.Device}");
+		Console.WriteLine ();
+		Console.WriteLine ($"RAW Input: {kbd.Keyboard} at {kbd.Device}");
+
 	},
 	deviceAddHandler: dev =>
 	{
 		//if (!( dev.ManufacturerName ?? string.Empty ).Equals (DEVICE_MFG_MIFARE_READER_LKD)) return;
-
-		Console.WriteLine ($"InputDeviceAdded: {dev}");
+		Console.WriteLine ();
+		Console.WriteLine ($"RAW Input: InputDeviceAdded: {dev}");
 	}
 	, deviceRemovedHandler: () =>
 	{
-		Console.WriteLine ("InputDeviceRemoved");
+		Console.WriteLine ();
+		Console.WriteLine ("RAW Input: InputDeviceRemoved");
 	}
 
 	);
@@ -29,6 +32,8 @@ using RawInputWindowReciever mowRawInput = new (
 // Get the devices that can be handled with Raw Input.
 var devices = RawInputDevice.GetDevices ();
 
+UOM.WinAPI.Windows.RawInput.Native.Hook.GlobalKeyboardHook kh = new ();
+kh.SetHook ();
 
 RawInputWindowReciever.MessageLoopEnter ();
 
