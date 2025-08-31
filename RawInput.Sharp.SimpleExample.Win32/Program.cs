@@ -32,9 +32,7 @@ using RawInputWindowReciever mowRawInput = new (
 // Get the devices that can be handled with Raw Input.
 var devices = RawInputDevice.GetDevices ();
 
-UOM.WinAPI.Windows.RawInput.Native.Hook.GlobalKeyboardHook kh = new ();
-kh.SetHook ();
-
+UOM.WinAPI.Windows.RawInput.Native.Hook.GlobalKeyboardHook kh = new (true);
 RawInputWindowReciever.MessageLoopEnter ();
 
 /*
